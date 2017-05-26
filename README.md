@@ -53,3 +53,9 @@ My project includes the following directories/files:
 10. vehicle_processor.py containing code that performs a vehicle search using a sliding window technique and a trained classifier, also thresholding code to deal with false positives and object labeling using heatmaps
 
 11. writeup_template.md summarizing the results 
+
+first, clone the project, Once cloned, an example image of the final stage of my pipeline is auto-generated and saved in the output_images directory and a processed version of the provided project video is also auto-generated and saved in the output_video directory by executing:
+
+```python
+python main.py  
+```
