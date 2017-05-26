@@ -35,7 +35,7 @@ Final animation gif like below:
 
 ### Submission Contents & Execution
 
-My project includes the following directories/files:
+#### My project includes the following directories/files:
 
 1. model_training directory containing data sets, pickled objects, training and test set preparation code, feature extraction code, and model training code
 
@@ -71,7 +71,7 @@ I have incorporated my vehicle detection and tracking process into the pipeline 
 
 As before, my submission includes two pipelines: The first is the test pipeline (test_pipeline.py) which saves an example of the final output of the pipeline to the output_images directory (see lines: 112–152 related to this current project). The second is the production pipeline (production_pipeline.py) which processes each frame of the Udacity-provided project video (project_video.mp4) through each stage (0-part-2 through 4 of my P4 submission) and the newly added vehicle detection and tracking capability I’ve added with P5 (see lines: 28–41, 61–67, 183–209). Then finally, it saves a processed video (processed_project_video.mp4) to the output_video directory. I’ll describe the sequence of processing of the data preparation, model training, and finally the pipeline processing the project video.
 
-1. Training and Test Data Set Creation
+### 1. Training and Test Data Set Creation
 
 First off, the project data sets need to be downloaded from my AWS S3 bucket. There are links and instructions in the readme files contained in the “model_training/data_sets/vehicles” and “model_training/data_sets/non_vehicles” directories to accomplish this (note: you only need to do this if you want to train the model from scratch). Essentially you just need to extract each zip file under its relevant path. You then need to execute the “model_training/train_test_data_processor.py” file (via python train_test_data_processor.py) to prepare a training set and test set. Each is pickled and saved in the “model_training/pickled_objects” directory. 
 
@@ -79,7 +79,7 @@ The “vehicle” data set (provided by Udacity) contains 8,792 images and the �
 
 ![image1]
 
-2. Feature Extraction & Model Training
+### 2. Feature Extraction & Model Training
 
 I’ll first discuss my feature extraction strategy. During early experimentation, I found that an ensemble approach to feature construction (leveraging raw pixel intensities (targeting color and shape) and gradient of raw pixel intensities (targeting shape)) was key to achieving strong results in the task of classification. When using any of them alone or in part, I wasn’t able to achieve a test set accuracy of more than 94%. But together, I was able to achieve 99.4%.
 
@@ -99,7 +99,7 @@ My final model training results:
 
 ![image3]
 
-3. Pipeline & Sliding Window Strategy
+### 3. Pipeline & Sliding Window Strategy
 
 The code for detecting and tracking vehicles is in the vehicle_processor.py file. For my sliding window strategy, I followed the example given in the HOG sub-sampling window search lesson,as I felt it would be much more efficient to compute the HOG features once for each scaled image vs. per window in that image. Beyond the few tweaks I made to return the set of positive prediction window coordinates (instead returning an image with them drawn on there), the code is largely the same as was provided in the lesson (see the perform_vehicle_search function, lines 60–137). This algorithm uses steps of 2 cells (~75% window overlap) vs. defining a specific 
 overlap.
@@ -124,13 +124,15 @@ The heatmap really helped with the sanity check on where the objects should be o
 
 ![image6]
 
-4. Resulting Detected & Tracked Vehicles
+### 4. Resulting Detected & Tracked Vehicles
 
 Once the final bounding boxes are determined, they’re drawn back on the frame. Example output of the P4 requirements + the detected/tracked vehicles for P5:
 
 ![image7]
 
 it’s located in the output_video folder of my submission, the file is named: processed_project_video.mp4   
+
+### Discussion
 
 I started off down an audacious path, using the project data set, but also adding in the Udacity data set 1 (just the bounded objects in each image), and then to balance the data set again, sampling from the minority class (non-vehicle) and creating synthetic data (using translations and brightness adjustment). This took many hours to put together but I was really learning a lot along the way. As I worked to tweak the model hyper-parameters, I hit a brick wall at 98.5% accuracy. No matter what I did, I couldn’t get additional improvement. Additionally, when I tested the model on the test images it wasn’t doing a great job of identifying the vehicles and there were lots of false positives. Given the amount of work I had left to do to complete the project, I decided to abandon this approach and go back to using the provided project data set (vehicles and non-vehicles) without any augmentation. This turned out to be a smart idea, as I 
 made lots of progress quickly; training a model that achieved 99.4% accuracy on the test set and performed well on test images and the project video.
