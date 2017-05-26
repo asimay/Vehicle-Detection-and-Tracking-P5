@@ -15,6 +15,7 @@ The goals / steps of this project are the following:
 * Estimate a bounding box for vehicles detected.
 
 [//]: # (Image References)
+[image0]: ./output_images/final_animation.gif
 [image1]: ./output_images/six_random_images_from_each_class.png
 [image2]: ./output_images/color_space_explore.png
 [image3]: ./output_images/final_training_result.png
@@ -28,6 +29,10 @@ The goals / steps of this project are the following:
 ### Here I will consider the rubric points individually and describe how I addressed each point in my implementation.  
 
 ---
+Final animation gif like below:
+
+![image0]
+
 ### Submission Contents & Execution
 
 My project includes the following directories/files:
@@ -72,7 +77,7 @@ First off, the project data sets need to be downloaded from my AWS S3 bucket. Th
 
 The “vehicle” data set (provided by Udacity) contains 8,792 images and the “non-vehicle” data set (also provided by Udacity) contains 8,968 images. Below are some example images from them:  
 
-[image1]
+![image1]
 
 2. Feature Extraction & Model Training
 
@@ -83,7 +88,7 @@ My feature extraction code is all contained within the “model_training/feature
 The “model_training/model_train_processor.py” file contains the code to train and pickle the model and the scaler for use in the pipeline (it can be run via python model_train_processor.py, note: you only need to do this if you want to train the model from scratch, a pickled version of the trained model and scaler are included in this submission). Lines 24–50 perform feature extraction (as described earlier) on the training set. I found that the YCrCb color space (leveraging all three channels with HOG) achieved the best results, giving my model an accuracy improvement of 0.5 over other color spaces tried. This choice of color space definitely improved 
 the shape definition in the HOG images seen below:
 
-[image2]
+![image2]
 
 My strategy for classification was to follow the path of using a support vector machine, as I hadn’t worked with them in the past and wanted to get some experience. As described in the lessons, I scaled my features (see lines 113–118 in model_train_processor.py), then used the LinearSVC from sklearn (see lines 127–134 in model_train_processor.py).
 
@@ -92,7 +97,7 @@ those as they were described in the lessons (as described earlier, the YCrCb col
 
 My final model training results:
 
-[image3]
+![image3]
 
 3. Pipeline & Sliding Window Strategy
 
@@ -103,11 +108,11 @@ I chose to employ 4 window sizes to locate vehicles at multiple depths-of-field/
 
 I also chose to employ the same y-axis cropping in the perform_vehicle_search function as was described in the lessons (i.e., 400 to 656 on the y-axis). Below is what the cropped frame looks like:
 
-[image4]
+![image4]
 
 Below are the resulting detections from the perform_vehicle_search function drawn back on the original frame. You see that there are some false positives on the right-side edge.
 
-[image5]
+![image5]
 
 So far, I had spent a lot of time improving the reliability of my classifier by employing an ensemble of features (as was discussed earlier) to ensure the trained model had good intuition around detecting vehicles in various conditions (employing multiple search window sizes helped as well). With that said, the model wasn’t perfect, so I had to add additional intuition to improve the overall robustness of my pipeline to combat times with the model failed to predict correctly.
 
@@ -117,12 +122,19 @@ On top of that, I kept the positive predicted windows for each frame in a queue,
 
 The heatmap really helped with the sanity check on where the objects should be over the course of several frames and cut out anomalies a lot. That result was then sent to an object labeling function (see lines 45–58 of the vehicle_processor.py file and 205–209 of the production_pipeline.py file) which made the final call on the shape/split of the resulting bounding boxes for the heatmap blobs.
 
-[image6]
+![image6]
 
 4. Resulting Detected & Tracked Vehicles
 
 Once the final bounding boxes are determined, they’re drawn back on the frame. Example output of the P4 requirements + the detected/tracked vehicles for P5:
 
-[image7]
+![image7]
 
 it’s located in the output_video folder of my submission, the file is named: processed_project_video.mp4   
+
+I started off down an audacious path, using the project data set, but also adding in the Udacity data set 1 (just the bounded objects in each image), and then to balance the data set again, sampling from the minority class (non-vehicle) and creating synthetic data (using translations and brightness adjustment). This took many hours to put together but I was really learning a lot along the way. As I worked to tweak the model hyper-parameters, I hit a brick wall at 98.5% accuracy. No matter what I did, I couldn’t get additional improvement. Additionally, when I tested the model on the test images it wasn’t doing a great job of identifying the vehicles and there were lots of false positives. Given the amount of work I had left to do to complete the project, I decided to abandon this approach and go back to using the provided project data set (vehicles and non-vehicles) without any augmentation. This turned out to be a smart idea, as I 
+made lots of progress quickly; training a model that achieved 99.4% accuracy on the test set and performed well on test images and the project video.
+
+I really learned a lot during this project and feel like I was able to implement some interesting things (such as: linear svc that performed well on the test set, leveraging a decision function to improve confidence during the prediction process, heatmapping).
+
+I think there is definitely room for improvement in my pipeline, especially in the area of performance. I would have liked to explore more around how to get a good result in a performant manner but time got the best of me.
