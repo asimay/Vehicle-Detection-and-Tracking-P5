@@ -59,3 +59,10 @@ first, clone the project, Once cloned, an example image of the final stage of my
 ```python
 python main.py  
 ```
+
+### Overview
+
+I have incorporated my vehicle detection and tracking process into the pipeline I delivered in the advanced lane finding project (please refer to my detailed write-up from P4 for details on its inner-workings). I won’t revisit those portions but will address the deltas I’ve added to meet the requirements of this current project.
+
+As before, my submission includes two pipelines: The first is the test pipeline (test_pipeline.py) which saves an example of the final output of the pipeline to the output_images directory (see lines: 112–152 related to this current project). The second is the production pipeline (production_pipeline.py) which processes each frame of the Udacity-provided project video (project_video.mp4) through each stage (0-part-2 through 4 of my P4 submission) and the newly added vehicle detection and tracking capability I’ve added with P5 (see lines: 28–41, 61–67, 183–209). Then finally, it saves a processed video (processed_project_video.mp4) to the output_video directory. I’ll describe the sequence of processing of the data preparation, model training, and finally the pipeline processing the project video.
+
